@@ -84,13 +84,13 @@ void loop() {
     case KEY1:
       motor.step(1, 200);
       break;
-    case KEY4:
+    case KEY2:
       motor.step(1, 200);
       break;
-    case KEY2:
+    case KEY3:
       motor.step(0, 200);
       break;
-    case KEY3:
+    case KEY4:
       motor.step(0, 200);
       break;
   }

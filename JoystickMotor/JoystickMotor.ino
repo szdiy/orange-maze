@@ -66,6 +66,7 @@ public:
 
 SZDIYStepMotor motor(PORT_1);
 SZDIYJoystick joystick(PORT_8);
+MeLimitSwitch limitSwitch(PORT_6);
 
 void setup() {
   Serial.begin(9600);
@@ -76,12 +77,13 @@ void setup() {
 void loop() {
   joystick.readJoystick();
   delay(10);
+
   if (joystick.y > 600) {
      motor.step(1, 200);
   }
   else if (joystick.y > 400) {
     
-  } else {
+  } else if (!limitSwitch.touched()) {
     motor.step(0, 200);
   }
 }
