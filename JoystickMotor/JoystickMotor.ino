@@ -77,12 +77,12 @@ void loop() {
   joystick.readJoystick();
   delay(10);
   if (joystick.y > 600) {
-     motor.step(0, 200);
+     motor.step(1, 200);
   }
   else if (joystick.y > 400) {
     
   } else {
-    motor.step(1, 200);
+    motor.step(0, 200);
   }
 }
 
