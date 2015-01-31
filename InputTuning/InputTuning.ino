@@ -93,9 +93,69 @@ class SZDIYJoystick: public MeJoystick {
    }   
 };
 
+#define ULTRA_MAX_DISTANCE 90.0
+#define ULTRA_MIN_DISTANCE 10.0
+#define ULTRA_RANGE 80.0
+
+class SZDIYUltrasonicSensor {
+public:
+  double val;
+  MeUltrasonicSensor ultraSonic;
+  MeRGBLed led;
+
+  SZDIYUltrasonicSensor(uint8_t ultraSonicPort, uint8_t ledPort) {
+    ultraSonic = MeUltrasonicSensor(ultraSonicPort);
+    led = MeRGBLed(ledPort);
+    led.setNumber(4);
+  }
+  
+  void initRead() {
+    val = this->readDistance();
+    this->setIndicator(false, 1.0);
+  }
+  
+  double readDistance() {
+    return (ultraSonic.distanceCm(ULTRA_MAX_DISTANCE) - ULTRA_MIN_DISTANCE) / ULTRA_RANGE * 100.0;
+  }
+  
+  void readUltraSonic() {
+    double newVal = this->readDistance();
+    if (newVal < 5) {
+      return;
+    }
+    
+    Serial.print("measure: ");
+    Serial.println(newVal);
+    
+    if (newVal > 0 && newVal < 100.0) {
+      setIndicator(true, newVal/100.0);
+    }
+    else {
+      setIndicator(false, 1);
+    }
+    
+    val = newVal;
+  }
+  
+  void setIndicator(boolean correct, double l) {
+      for (int i = 0; i < 4; i++) {
+        if (correct) {
+          led.setColorAt(i, 0, 128*l, 0);
+        }
+        else {
+          led.setColorAt(i, 128, 0, 0);
+        }
+      }
+      led.show();
+  }
+  
+};
+
+
 SZDIY4Button btn(PORT_6);
 SZDIYPotentiometer meter(PORT_7);
 SZDIYJoystick joystick(PORT_8);
+SZDIYUltrasonicSensor ultraSonic(PORT_4, PORT_3);
 
 void setup() 
 {
@@ -104,14 +164,15 @@ void setup()
 //  btn.initRead();
   meter.initRead();
   joystick.initRead();
-  
+  ultraSonic.initRead();
 }
 
 void loop()
 { 
 //  btn.read4Button();
-  meter.readPotentiometer();
-  joystick.readJoystick();
+//  meter.readPotentiometer();
+//  joystick.readJoystick();
+  ultraSonic.readUltraSonic();
   
   delay(10);
 }
