@@ -98,23 +98,11 @@ void setup() {
 void loop() {
   ultraSonic.readUltraSonic();
   
-  
-  
-//  if (ultraSonic.val > 80) {
-//    motor.step(1, 400);
-//  }
-//  else 
   if (ultraSonic.val > 60) {
     motor.step(1, 200);
   }
-  else {
-//  if (ultraSonic.val > 40) {
-//  }
-//  if (ultraSonic.val < 20) {
+  if (ultraSonic.val < 40) {
     motor.step(0, 200);
-//  }
-//  else {
-//    motor.step(0, 400);
   }
 }
 

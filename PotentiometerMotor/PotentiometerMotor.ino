@@ -68,32 +68,49 @@ public:
   
 };
 
+/* Potentiometer Module */
+class SZDIYPotentiometer: public MePotentiometer {
+  public:
+    double val; // normal
+    
+  
+    SZDIYPotentiometer(uint8_t port): MePotentiometer(port) {}
+  
+    void initRead() {  
+      val = this->read() / 10.0;
+    }
+    
+    void readPotentiometer() {
+      
+      uint8_t newVal = this->read() / 10.0;
+      if (val != newVal) {
+        Serial.print("value=");
+        Serial.println(newVal);
+        
+        val = newVal;
+      }
+    }
+};
+
 SZDIYStepMotor motor(PORT_1);
-SZDIY4Button btn(PORT_6);
+SZDIYPotentiometer meter(PORT_7);
 
 void setup() {
   Serial.begin(9600);
   
-  btn.initRead();
+  meter.initRead();
 }
 
 void loop() {
-  btn.read4Button();
+  meter.readPotentiometer();
   
-  switch(btn.key) {
-    case KEY1:
-      motor.step(1, 200);
-      break;
-    case KEY4:
-      motor.step(1, 200);
-      break;
-    case KEY2:
-      motor.step(0, 200);
-      break;
-    case KEY3:
-      motor.step(0, 200);
-      break;
+  if (meter.val > 55) {
+    motor.step(1, 200);
   }
+  if (meter.val < 45) {
+    motor.step(0, 200);
+  }
+    
 }
 
 
