@@ -23,11 +23,11 @@ class SZDIYJoystick: public MeJoystick {
     
       // print the results to the serial monitor:
       if (x != new_x || y != new_y) {
-        Serial.print("Joystick X = " );                       
-        Serial.print(new_x);   
-        
-        Serial.print("\t Joystick Y = " );                       
-        Serial.println(new_y);
+//        Serial.print("Joystick X = " );                       
+//        Serial.print(new_x);   
+//        
+//        Serial.print("\t Joystick Y = " );                       
+//        Serial.println(new_y);
         
         x = new_x;
         y = new_y;
@@ -45,20 +45,31 @@ void setup() {
   Serial.begin(9600);
   
   joystick.initRead();
+  
 }
 
 void loop() {
   joystick.readJoystick();
   delay(10);
-
-  if (joystick.y >= 600) {
-     motor.run((joystick.y - 500) / 2);
-  }
-  else if (joystick.y > 400 || limitSwitch.touched()) {
+  
+  if (limitSwitch.touched()) {
+    motor.run(80);
+    delay(1000);
     motor.stop();
-  } else if (!limitSwitch.touched()) {
-    motor.run((500 - joystick.y) / 2);
   }
+  
+  int speedMotor = (joystick.y - 500) / 2;
+  if (abs(speedMotor) < 50) {
+    motor.stop();
+  }
+  else {
+    motor.run(speedMotor);
+  }
+  
+  Serial.print("speed=");
+  Serial.print(speedMotor);
+  Serial.print(" touch=");
+  Serial.println(limitSwitch.touched() ? "on" : "off");
 }
 
 
