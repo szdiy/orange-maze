@@ -7,9 +7,11 @@
 
 long lastTime = 0;
 int keystart = KEY_NULL;
-int count_timer = 30;
+int preset_time = 30; // the total time to set
+int count_timer = preset_time; // the count down timer
 int bri = 0, st = 0;
 int suc_val; 
+
 class SZDIY4Button: public Me4Button {
   public:
     uint8_t key;
@@ -33,28 +35,30 @@ class SZDIY4Button: public Me4Button {
         case KEY2:
           if(keystart != KEY_START)
           {
-            count_timer = count_timer + 10;
+            preset_time = preset_time + 10;
           }
-          if(count_timer > 300)
+          if(preset_time > 300)
           {
-            count_timer = 300;
+            preset_time = 300;
           }
+          count_timer = preset_time;
           Serial.println("KEY2 pressed");
           break;
         case KEY3:
           keystart = KEY_NULL;
           Serial.println("KEY3 pressed");
-          count_timer = 30;
+          count_timer = preset_time;
           break;
         case KEY4: 
           if(keystart != KEY_START)
           {
-            count_timer = count_timer - 10;
-            if(count_timer < 0)
+            preset_time = preset_time - 10;
+            if(preset_time < 0)
             {
-              count_timer = 0;
+              preset_time = 0;
             }
           }
+          count_timer = preset_time;
           Serial.println("KEY4 pressed");
           break;
         }
