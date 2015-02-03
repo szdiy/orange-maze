@@ -39,7 +39,9 @@ class SZDIYJoystick: public MeJoystick {
 
 MeDCMotor motor(M1);
 SZDIYJoystick joystick(PORT_8);
-MeLimitSwitch limitSwitch(PORT_6);
+//MeLimitSwitch limitSwitchLow(PORT_6); // single switch
+MeLimitSwitch limitSwitchHigh(PORT_6, SLOT1);
+MeLimitSwitch limitSwitchLow(PORT_6, SLOT2);
 
 void setup() {
   Serial.begin(9600);
@@ -52,9 +54,15 @@ void loop() {
   joystick.readJoystick();
   delay(10);
   
-  if (limitSwitch.touched()) {
-    motor.run(80);
-    delay(1000);
+  if (limitSwitchLow.touched()) {
+    motor.run(100);
+    delay(600);
+    motor.stop();
+  }
+  
+  if (limitSwitchHigh.touched()) {
+    motor.run(-100);
+    delay(600);
     motor.stop();
   }
   
@@ -68,8 +76,10 @@ void loop() {
   
   Serial.print("speed=");
   Serial.print(speedMotor);
-  Serial.print(" touch=");
-  Serial.println(limitSwitch.touched() ? "on" : "off");
+  Serial.print(" low=");
+  Serial.print(limitSwitchLow.touched() ? "on" : "off");
+  Serial.print(" high=");
+  Serial.print(limitSwitchHigh.touched() ?  "on" : "off");
 }
 
 
